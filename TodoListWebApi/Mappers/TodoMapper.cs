@@ -19,5 +19,17 @@ namespace TodoListWebApi.Mappers
 
             return item;
         }
+
+        public static MongoTodoItem Map(TodoItem item)
+        {
+            var mongoItem = new MongoTodoItem()
+            {
+                Id = item.Id,
+                Description = item.Text,
+                Done = item.Done
+            };
+
+            return mongoItem;
+        }
     }
 }
