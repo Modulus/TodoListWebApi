@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TodoListWebApi.Mappers;
 using TodoListWebApi.Models;
@@ -15,11 +16,11 @@ namespace TodoListWebApi.Repo
         private readonly string _databaseName;
         private readonly string _collectionName;
 
-        public MongoTodoRepo(IMongoClient mongoClient, string databaseName = "todoBase", string collectionName = "todos")
+        public MongoTodoRepo(IMongoClient mongoClient, DatabaseConfiguration config)
         {
            _mongoClient = mongoClient;
-           _databaseName = databaseName;
-            _collectionName = collectionName;
+           _databaseName = config.DatabaseName;
+            _collectionName = config.CollectionName;
         }
 
         public async Task Delete(string todoId)
@@ -82,6 +83,24 @@ namespace TodoListWebApi.Repo
             var db = _mongoClient.GetDatabase(_databaseName, null);
 
             return db.GetCollection<MongoTodoItem>(_collectionName, null);
+        }
+
+        public async Task Save(TodoItem item)
+        {
+            var collection = GetCollection();
+
+            if(item != null && item.Id == null)
+            {
+                var mongoItem = TodoMapper.Map(item);
+                await collection.InsertOneAsync(mongoItem, CancellationToken.None);
+            }
+
+            else if (item != null)
+            {
+                //TODO: UPdate this to not overwrite the hash/salt
+                var mongoItem = TodoMapper.Map(item);
+                await collection.FindOneAndReplaceAsync(x => x.Id == item.Id, mongoItem);
+            }
         }
     }
 }

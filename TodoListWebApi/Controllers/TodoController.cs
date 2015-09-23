@@ -3,27 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
+using TodoListWebApi.Models;
+using TodoListWebApi.Repo;
 
 namespace TodoListWebApi.Controllers
 {
     public class TodoController : ApiController
     {
-        // GET: api/Todo
-        public IEnumerable<string> Get()
+        private ITodoRepo _repo;
+        public TodoController(ITodoRepo repo)
         {
-            return new string[] { "value1", "value2" };
+            _repo = repo;
+        }
+
+        // GET: api/Todo
+        [AllowAnonymous]
+        public async Task<IEnumerable<TodoItem>> Get()
+        {
+            return await _repo.GetTodos();
         }
 
         // GET: api/Todo/5
-        public string Get(int id)
+        public async Task<TodoItem> Get(string id)
         {
-            return "value";
+            return await _repo.FindById(id);
         }
 
         // POST: api/Todo
-        public void Post([FromBody]string value)
+        public async Task<HttpResponseMessage> Post(TodoItem todoItem)
         {
+            if( todoItem == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No data was posted");
+            }
+
+            return await SaveTodoAndGetResponse(todoItem);
         }
 
         // PUT: api/Todo/5
@@ -32,8 +48,33 @@ namespace TodoListWebApi.Controllers
         }
 
         // DELETE: api/Todo/5
-        public void Delete(int id)
+        public async Task Delete(string id)
         {
+           await _repo.Delete(id);
+        }
+
+        private async Task<HttpResponseMessage> SaveTodoAndGetResponse(TodoItem item)
+        {
+            var exists = await _repo.Exists(item.Id);
+            if (item.Id != null && exists == false)
+            {
+
+                var mongoItem = new MongoTodoItem()
+                {
+                    Done = item.Done,
+                    Description = item.Text
+                };
+
+
+                await _repo.Save(item);
+
+                return Request.CreateResponse<string>(HttpStatusCode.Created, "Todo created");
+            }
+            else
+            {
+                return Request.CreateResponse<string>(HttpStatusCode.Conflict, "Item allready exists in database");
+            }
+
         }
     }
 }

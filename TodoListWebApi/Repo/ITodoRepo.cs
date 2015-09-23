@@ -16,5 +16,6 @@ namespace TodoListWebApi.Repo
         Task<TodoItem> MaskAsNotDone(string todoId);
         Task<TodoItem> FindById(string todoId);
         Task Delete(string todoId);
+        Task Save(TodoItem mongoItem);
     }
 }
