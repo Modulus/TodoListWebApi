@@ -30,11 +30,11 @@ namespace TodoListWebApi.Repo
             await collection.FindOneAndDeleteAsync(todo => todo.Id == todoId);
         }
 
-        public async Task<bool> Exists(string todoId)
+        public async Task<bool> Exists(TodoItem item)
         {
             var collection = GetCollection();
 
-            var existingTodo = await collection.Find(todo => todo.Id == todoId).FirstOrDefaultAsync();
+            var existingTodo = await collection.Find(todo => todo.Description == item.Text).FirstOrDefaultAsync();
 
             return existingTodo != null;
         }

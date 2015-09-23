@@ -12,7 +12,7 @@ namespace TodoListWebApi.Repo
     {
         Task<IList<TodoItem>> GetTodos();
         Task<TodoItem> MarkAsDone(string todoId);
-        Task<bool> Exists(string todoId);
+        Task<bool> Exists(TodoItem item);
         Task<TodoItem> MaskAsNotDone(string todoId);
         Task<TodoItem> FindById(string todoId);
         Task Delete(string todoId);
