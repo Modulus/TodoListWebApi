@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Owin;
-using Owin;
-using System.Web.Http;
-using Microsoft.Owin.Cors;
+﻿using System.Web.Http;
 using Autofac;
-using TodoListWebApi.Repo;
+
+using Microsoft.Owin;
+using Microsoft.Owin.Cors;
 using MongoDB.Driver;
+using Owin;
+using TodoListWebApi.Repo;
+using Autofac.Integration.WebApi;
+using System.Reflection;
 
-[assembly: OwinStartup(typeof(TodoListWebApi.Startup))]
+[assembly: OwinStartup(typeof(ComWeb.Services.RestApi.Startup))]
 
-namespace TodoListWebApi
+namespace ComWeb.Services.RestApi
 {
     public partial class Startup
     {
+
         public void Configuration(IAppBuilder app)
         {
             var config = GlobalConfiguration.Configuration;
@@ -23,6 +24,8 @@ namespace TodoListWebApi
             var mongoDatabaseName = System.Configuration.ConfigurationManager.AppSettings["MongoDatabaseName"];
             var mongoTodoCollectionName = System.Configuration.ConfigurationManager.AppSettings["MongoTodoCollectionName"];
 
+       
+            app.UseAutofacWebApi(config);
 
             //For rest call on another domain
             //NB! Remove this before production
@@ -45,11 +48,22 @@ namespace TodoListWebApi
 
             builder.RegisterType<MongoTodoRepo>().UsingConstructor(typeof(IMongoClient), typeof(DatabaseConfiguration)).As<ITodoRepo>();
 
+            builder.RegisterWebApiFilterProvider(config);
 
+            // Register Web API controllers.
+            builder.RegisterApiControllers(Assembly.GetExecutingAssembly()).InstancePerRequest();
 
+            ConfigureAuth(app);
 
+            var container = builder.Build();
 
+            // Create an assign a dependency resolver for Web API to use.
+            var resolver = new AutofacWebApiDependencyResolver(container);
+            config.DependencyResolver = resolver;
 
+            app.UseAutofacMiddleware(container);
         }
+
+     
     }
 }

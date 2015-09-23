@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace TodoListWebApi.Models
+namespace ComWeb.Services.RestApi.Models
 {
     // Models used as parameters to AccountController actions.
 
