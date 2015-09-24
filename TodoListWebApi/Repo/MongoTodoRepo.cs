@@ -23,6 +23,8 @@ namespace TodoListWebApi.Repo
             _collectionName = config.CollectionName;
         }
 
+    
+
         public async Task Delete(string todoId)
         {
             var collection = GetCollection();
@@ -30,11 +32,20 @@ namespace TodoListWebApi.Repo
             await collection.FindOneAndDeleteAsync(todo => todo.Id == todoId);
         }
 
-        public async Task<bool> Exists(TodoItem item)
+        public async Task<bool> Exists(string id)
         {
             var collection = GetCollection();
 
-            var existingTodo = await collection.Find(todo => todo.Description == item.Text).FirstOrDefaultAsync();
+            var existingTodo = await collection.Find(todo => todo.Id == id).FirstOrDefaultAsync();
+
+            return existingTodo != null;
+        }
+
+        public async Task<bool> ExistsByText(string text)
+        {
+            var collection = GetCollection();
+
+            var existingTodo = await collection.Find(todo => todo.Description == text).FirstOrDefaultAsync();
 
             return existingTodo != null;
         }
@@ -85,7 +96,7 @@ namespace TodoListWebApi.Repo
             return db.GetCollection<MongoTodoItem>(_collectionName, null);
         }
 
-        public async Task Save(TodoItem item)
+        public async Task<TodoItem> Save(TodoItem item)
         {
             var collection = GetCollection();
 
@@ -93,14 +104,26 @@ namespace TodoListWebApi.Repo
             {
                 var mongoItem = TodoMapper.Map(item);
                 await collection.InsertOneAsync(mongoItem, CancellationToken.None);
+                return TodoMapper.Map(mongoItem);
             }
 
             else if (item != null)
             {
                 //TODO: UPdate this to not overwrite the hash/salt
                 var mongoItem = TodoMapper.Map(item);
-                await collection.FindOneAndReplaceAsync(x => x.Id == item.Id, mongoItem);
+
+                if(await ExistsByText(item.Text))
+                {
+                    await collection.FindOneAndReplaceAsync(x => x.Description == item.Text, mongoItem);
+
+                }
+                else if(await Exists(item.Id))
+                {
+                    await collection.FindOneAndReplaceAsync(x => x.Id == item.Id, mongoItem);
+                }
+                return TodoMapper.Map(mongoItem);
             }
+            return item;
         }
     }
 }

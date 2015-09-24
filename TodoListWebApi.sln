@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoListWebApi", "TodoListW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoListWebApi.Tests", "TodoListWebApi.Tests\TodoListWebApi.Tests.csproj", "{F813580B-9392-4DF4-A6B6-5267D25A95AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoListWebApi.IntegrationTests", "TodoListWebApi.IntegrationTests\TodoListWebApi.IntegrationTests.csproj", "{C26E2733-9558-4194-8181-E36D7B4B490B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F813580B-9392-4DF4-A6B6-5267D25A95AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F813580B-9392-4DF4-A6B6-5267D25A95AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F813580B-9392-4DF4-A6B6-5267D25A95AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C26E2733-9558-4194-8181-E36D7B4B490B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C26E2733-9558-4194-8181-E36D7B4B490B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C26E2733-9558-4194-8181-E36D7B4B490B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C26E2733-9558-4194-8181-E36D7B4B490B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -55,7 +55,7 @@ namespace TodoListWebApi.Controllers
 
         private async Task<HttpResponseMessage> SaveTodoAndGetResponse(TodoItem item)
         {
-            var exists = await _repo.Exists(item);
+            var exists = await _repo.Exists(item.Text);
             if (item.Id == null && exists == false)
             {
 

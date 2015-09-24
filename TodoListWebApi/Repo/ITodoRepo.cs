@@ -12,10 +12,11 @@ namespace TodoListWebApi.Repo
     {
         Task<IList<TodoItem>> GetTodos();
         Task<TodoItem> MarkAsDone(string todoId);
-        Task<bool> Exists(TodoItem item);
+        Task<bool> Exists(string id);
+        Task<bool> ExistsByText(string text);
         Task<TodoItem> MaskAsNotDone(string todoId);
         Task<TodoItem> FindById(string todoId);
         Task Delete(string todoId);
-        Task Save(TodoItem mongoItem);
+        Task<TodoItem> Save(TodoItem mongoItem);
     }
 }
