@@ -47,19 +47,7 @@ namespace TodoListWebApi.Tests.Mappers
             todoRepoMock.Verify(repo => repo.GetTodos(), Times.AtMostOnce());
         }
 
-        [Fact]
-        public async void Delete_IdInParmas_CallsRepoDelete()
-        {
-            todoRepoMock.Setup(instance => instance.Delete(todos[0].Id)).Callback(() =>
-            {
-            });
-
-            var controller = CreateController(todoRepoMock);
-
-            await controller.Delete(todos[0].Id);
-
-            todoRepoMock.Verify(repo => repo.Delete(todos[0].Id), Times.AtMostOnce());
-        }
+        
 
 
         private static TodoController CreateController(IMock<ITodoRepo> mockRepo)
